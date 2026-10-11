@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>*{box-sizing:border-box}body{margin:0;background:#F1F3F6;color:#12263A;font-family:'Plus Jakarta Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#0B72C4;text-decoration:none}a:hover{color:#08558F}button,input{font-family:'Plus Jakarta Sans',sans-serif}input:focus{outline:none}</style>
+</helmet>
+<div style="display:flex;min-height:100vh;align-items:flex-start">
+
+<aside style="position:sticky;top:0;width:236px;height:100vh;flex-shrink:0;background:#fff;border-right:1px solid #E2E9F0;display:flex;flex-direction:column;padding:20px 12px">
+  <div style="display:flex;flex-direction:column;gap:2px;padding:4px 12px 22px"><div style="display:flex;align-items:baseline;gap:2px;font-size:21px;font-weight:800"><span style="color:#0B72C4">CBN</span><span style="color:#5BB4E8;font-weight:600">fiber</span></div><span style="font-size:12.5px;font-weight:700;color:#6B7684">Check-in Admin</span></div>
+  <nav style="display:flex;flex-direction:column;gap:2px">
+    <sc-for list="{{ nav }}" as="n" hint-placeholder-count="7">
+      <button onClick="{{ n.on }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;height:40px;padding:0 12px;border:none;border-radius:10px;background:{{ n.bg }};color:{{ n.fg }};font-size:14px;font-weight:{{ n.fw }};cursor:pointer;text-align:left" style-hover="background:#F1F6FB">{{ n.label }}<span style="font-size:11px;font-weight:700;color:#0B72C4;{{ n.badgeStyle }}">{{ n.badge }}</span></button>
+    </sc-for>
+  </nav>
+  <div style="margin-top:auto;padding:12px;border-radius:12px;background:#F5F8FB;display:flex;flex-direction:column;gap:4px">
+    <span style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700"><span style="width:8px;height:8px;border-radius:50%;background:#22C55E"></span>Terhubung ke CBN fiber app</span>
+    <span style="font-size:11.5px;color:#6B7684">Perubahan langsung berlaku di app tanpa rilis baru.</span>
+  </div>
+</aside>
+
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+  <header style="position:sticky;top:0;z-index:5;height:64px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid #E2E9F0;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 28px">
+    <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#6B7684"><span>Check-in Admin</span><span>/</span><b style="color:#12263A;font-weight:700">{{ pageTitle }}</b></div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <span style="font-size:13px;font-weight:600;color:#3C4A57;font-variant-numeric:tabular-nums">{{ clock }} WIB</span>
+      <span style="height:26px;padding:0 10px;border-radius:999px;background:#E8F7EE;color:#15803D;font-size:12px;font-weight:700;display:flex;align-items:center">Production</span>
+      <div style="width:34px;height:34px;border-radius:50%;background:#E8F3FC;color:#0B72C4;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center">AJ</div>
+    </div>
+  </header>
+
+  <main style="padding:28px;display:flex;flex-direction:column;gap:20px;max-width:1320px;width:100%">
+
+  <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:4px;max-width:640px"><h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em">Dashboard</h1><p style="margin:0;font-size:14px;color:#6B7684;line-height:1.55">Ringkasan check-in hari ini. Angka diperbarui setiap detik dari log server.</p></div></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+        <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:18px;display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600;color:#6B7684">{{ k.label }}</span><b style="font-size:28px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums">{{ k.value }}</b><span style="font-size:12.5px;font-weight:600;color:{{ k.dc }}">{{ k.delta }}</span></div>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:14px">
+        <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Check-in per jam</b><span style="font-size:13px;color:#6B7684;line-height:1.5">Hari ini, WIB</span></div></div>
+          <div style="display:flex;align-items:flex-end;gap:4px;height:180px">
+            <sc-for list="{{ hours }}" as="h" hint-placeholder-count="24">
+              <div style="flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end"><div style="height:{{ h.h }};background:{{ h.bg }};border-radius:4px 4px 2px 2px"></div></div>
+            </sc-for>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;color:#6B7684;font-variant-numeric:tabular-nums"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
+        </div>
+        <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Event berjalan</b></div><button onClick="{{ goEvent }}" style="border:none;background:none;color:#0B72C4;font-size:13px;font-weight:700;cursor:pointer;padding:0">Kelola ›</button></div>
+          <sc-for list="{{ activeEvents }}" as="e" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:#FFF6E0;border:1px solid #FFE2A3">
+              <b style="width:52px;height:40px;border-radius:10px;background:#F5A700;color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ e.val }}</b>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><b style="font-size:14px">{{ e.name }}</b><span style="font-size:12px;color:#8A5A00;font-variant-numeric:tabular-nums">s.d. {{ e.end }}</span></div>
+              <span style="font-size:12.5px;font-weight:700;color:#3C4A57;font-variant-numeric:tabular-nums">{{ e.part }} user</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);overflow:hidden">
+        <div style="padding:16px 18px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Check-in terbaru</b><span style="font-size:13px;color:#6B7684;line-height:1.5">Dicatat dengan jam server sampai detik.</span></div><button onClick="{{ goLog }}" style="border:none;background:none;color:#0B72C4;font-size:13px;font-weight:700;cursor:pointer;padding:0">Lihat semua ›</button></div></div>
+        <div style="display:grid;grid-template-columns:190px minmax(0,1.4fr) 90px 80px minmax(0,1fr);gap:14px;padding:11px 18px;background:#F5F8FB;border-bottom:1px solid #E2E9F0;font-size:11.5px;font-weight:700;color:#6B7684;text-transform:uppercase;letter-spacing:.04em"><span>Waktu (WIB)</span><span>Pelanggan</span><span>Streak</span><span>Poin</span><span>Event</span></div>
+        <sc-for list="{{ logTop }}" as="l" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:190px minmax(0,1.4fr) 90px 80px minmax(0,1fr);gap:14px;padding:12px 18px;border-bottom:1px solid #EDF1F5;font-size:13.5px;align-items:center;background:{{ l.hl }};transition:background 1s">
+            <span style="font-variant-numeric:tabular-nums;font-weight:600">{{ l.t }}</span><div style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:700">{{ l.name }}</span><span style="font-size:12px;color:#6B7684">{{ l.id }}</span></div><span>{{ l.streak }} hari</span><b style="color:#15803D">+{{ l.poin }}</b><span style="color:#3C4A57">{{ l.ev }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isRules }}">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:4px;max-width:640px"><h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em">Aturan Poin</h1><p style="margin:0;font-size:14px;color:#6B7684;line-height:1.55">Atur berapa poin yang didapat user tiap check-in. Simulasi di kanan berubah langsung saat angka diubah.</p></div></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:14px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:4px 20px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;border-bottom:1px solid #EDF1F5;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Poin dasar per hari</span><span style="font-size:12.5px;color:#6B7684;line-height:1.5">Poin sebelum dikali multiplier.</span></div><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:140px;max-width:100%"><input value="{{ r.base }}" onChange="{{ onBase }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"><span style="font-size:13px;color:#6B7684;white-space:nowrap">poin</span></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;border-bottom:1px solid #EDF1F5;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Bonus hari ke-7 siklus</span><span style="font-size:12.5px;color:#6B7684;line-height:1.5">Diberikan setiap kelipatan 7 hari streak. Tidak dikali.</span></div><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:140px;max-width:100%"><span style="font-size:14px;font-weight:700;color:#6B7684">+</span><input value="{{ r.cycle }}" onChange="{{ onCycle }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"><span style="font-size:13px;color:#6B7684;white-space:nowrap">poin</span></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;border-bottom:1px solid #EDF1F5;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Masa berlaku poin</span><span style="font-size:12.5px;color:#6B7684;line-height:1.5">Dihitung sejak poin didapat.</span></div><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:140px;max-width:100%"><input value="{{ r.expiry }}" onChange="{{ onExpiry }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"><span style="font-size:13px;color:#6B7684;white-space:nowrap">bulan</span></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Jam reset harian</span><span style="font-size:12.5px;color:#6B7684;line-height:1.5">Batas pergantian hari check-in.</span></div><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:140px;max-width:100%"><input value="{{ r.reset }}" onChange="{{ onReset }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"><span style="font-size:13px;color:#6B7684;white-space:nowrap">WIB</span></div></div>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Multiplier streak</b><span style="font-size:13px;color:#6B7684;line-height:1.5">Dikalikan ke poin dasar sesuai panjang streak.</span></div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;padding:10px 12px;border-radius:10px;border:none;background:#F5F8FB;border-bottom:1px solid #E2E9F0;font-size:11.5px;font-weight:700;color:#6B7684;text-transform:uppercase;letter-spacing:.04em"><span>Dari hari</span><span>Sampai hari</span><span>Multiplier</span></div>
+            <sc-for list="{{ tiers }}" as="t" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:center;padding:0 0">
+                <div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ t.from }}" onChange="{{ t.onFrom }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"></div><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ t.to }}" onChange="{{ t.onTo }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"></div><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><span style="font-size:14px;font-weight:700;color:#6B7684">×</span><input value="{{ t.m }}" onChange="{{ t.onM }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Milestone streak</b><span style="font-size:13px;color:#6B7684;line-height:1.5">Bonus sekali saat streak mencapai hari tertentu.</span></div><button onClick="{{ addMs }}" style="border:none;background:none;color:#0B72C4;font-size:13px;font-weight:700;cursor:pointer;padding:0">+ Tambah</button></div>
+            <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:1fr 1fr 36px;gap:14px;align-items:center">
+                <div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ m.d }}" onChange="{{ m.onD }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"><span style="font-size:13px;color:#6B7684;white-space:nowrap">hari</span></div><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><span style="font-size:14px;font-weight:700;color:#6B7684">+</span><input value="{{ m.b }}" onChange="{{ m.onB }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"><span style="font-size:13px;color:#6B7684;white-space:nowrap">poin</span></div>
+                <button onClick="{{ m.onDel }}" style="width:36px;height:36px;border:none;border-radius:10px;background:transparent;color:#6B7684;cursor:pointer;font-size:18px" style-hover="background:#FEF4F5;color:#E11D2E">×</button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;position:sticky;top:88px">
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Simulasi 30 hari</b><span style="font-size:13px;color:#6B7684;line-height:1.5">User level Basic, streak tidak putus, tanpa event.</span></div></div>
+            <div style="display:flex;align-items:flex-end;gap:3px;height:170px;padding-top:18px">
+              <sc-for list="{{ sim }}" as="s" hint-placeholder-count="30">
+                <div style="flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px"><span style="font-size:9.5px;font-weight:700;color:#8A5A00">{{ s.top }}</span><div style="width:100%;height:{{ s.h }};background:{{ s.bg }};border-radius:4px 4px 2px 2px"></div></div>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+              <div style="padding:12px;border-radius:12px;background:#F5F8FB;display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:#6B7684">Total 30 hari</span><b style="font-size:20px;font-weight:800;font-variant-numeric:tabular-nums">{{ simTotal }}</b></div>
+              <div style="padding:12px;border-radius:12px;background:#F5F8FB;display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:#6B7684">Hari ke-1</span><b style="font-size:20px;font-weight:800;font-variant-numeric:tabular-nums">{{ simD1 }}</b></div>
+              <div style="padding:12px;border-radius:12px;background:#F5F8FB;display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:#6B7684">Hari ke-30</span><b style="font-size:20px;font-weight:800;font-variant-numeric:tabular-nums">{{ simD30 }}</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <sc-if value="{{ rulesDirty }}">
+        <div style="position:sticky;bottom:20px;align-self:center;display:flex;align-items:center;gap:16px;padding:12px 12px 12px 20px;border-radius:14px;background:#12263A;color:#fff;box-shadow:0 16px 40px rgba(14,34,51,.3)">
+          <span style="font-size:14px;font-weight:600">Ada perubahan yang belum disimpan</span>
+          <button onClick="{{ resetRules }}" style="height:38px;padding:0 14px;border:1px solid rgba(255,255,255,.25);border-radius:10px;background:transparent;color:#fff;font-size:13.5px;font-weight:700;cursor:pointer">Batalkan</button>
+          <button onClick="{{ saveRules }}" style="height:38px;padding:0 16px;border:none;border-radius:10px;background:#0B72C4;color:#fff;font-size:13.5px;font-weight:700;cursor:pointer">Simpan & terapkan</button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isEventList }}">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:4px;max-width:640px"><h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em">Event</h1><p style="margin:0;font-size:14px;color:#6B7684;line-height:1.55">Buat dan jadwalkan event untuk mendorong poin di waktu tertentu. Maks. 1 event per tipe berjalan bersamaan.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button onClick="{{ newEvent }}" style="height:40px;padding:0 16px;border:none;border-radius:10px;background:#0B72C4;color:#fff;font:700 14px 'Plus Jakarta Sans';cursor:pointer;white-space:nowrap" style-hover="background:#095FA3">+ Buat event</button></div></div>
+      <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);overflow:hidden">
+        <div style="overflow-x:auto"><div style="min-width:1000px">
+        <div style="display:grid;grid-template-columns:minmax(200px,1.6fr) 110px 64px 190px 120px 76px 100px;gap:14px;padding:11px 18px;background:#F5F8FB;border-bottom:1px solid #E2E9F0;font-size:11.5px;font-weight:700;color:#6B7684;text-transform:uppercase;letter-spacing:.04em"><span>Event</span><span>Tipe</span><span>Nilai</span><span>Periode (WIB)</span><span>Target</span><span>Peserta</span><span>Status</span></div>
+        <sc-for list="{{ events }}" as="e" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:minmax(200px,1.6fr) 110px 64px 190px 120px 76px 100px;gap:14px;padding:14px 18px;border-bottom:1px solid #EDF1F5;font-size:13.5px;align-items:center">
+            <b style="font-weight:700">{{ e.name }}</b><span style="color:#3C4A57">{{ e.typeLabel }}</span><b style="color:#8A5A00">{{ e.val }}</b>
+            <div style="display:flex;flex-direction:column;font-size:12.5px;color:#3C4A57;font-variant-numeric:tabular-nums"><span>{{ e.start }}</span><span>{{ e.end }}</span></div>
+            <span style="color:#3C4A57">{{ e.seg }}</span><span style="font-variant-numeric:tabular-nums">{{ e.part }}</span>
+            <div><span style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:999px;background:{{ e.sbg }};color:{{ e.sfg }};font-size:12px;font-weight:700;white-space:nowrap">{{ e.status }}</span></div>
+          </div>
+        </sc-for>
+        </div></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isEventEdit }}">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:4px;max-width:640px"><h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em">Buat event</h1><p style="margin:0;font-size:14px;color:#6B7684;line-height:1.55">Isi detail event. Preview di kanan menunjukkan tampilan pop-up di app.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button onClick="{{ cancelEvent }}" style="height:40px;padding:0 16px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;color:#12263A;font:700 14px 'Plus Jakarta Sans';cursor:pointer;white-space:nowrap" style-hover="background:#F5F8FB">Batal</button><button onClick="{{ draftEvent }}" style="height:40px;padding:0 16px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;color:#12263A;font:700 14px 'Plus Jakarta Sans';cursor:pointer;white-space:nowrap" style-hover="background:#F5F8FB">Simpan draft</button><button onClick="{{ scheduleEvent }}" style="height:40px;padding:0 16px;border:none;border-radius:10px;background:#0B72C4;color:#fff;font:700 14px 'Plus Jakarta Sans';cursor:pointer;white-space:nowrap" style-hover="background:#095FA3">Jadwalkan</button></div></div>
+      <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex:1;min-width:min(100%,460px);display:flex;flex-direction:column;gap:14px">
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:700">Nama event</span><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ ed.name }}" onChange="{{ onEdName }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"></div><span style="font-size:12px;color:#6B7684">Tampil di banner app. Maks. 28 karakter · {{ edNameLen }}/28</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:13.5px;font-weight:700">Tipe</span>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px">
+                <sc-for list="{{ edTypes }}" as="t" hint-placeholder-count="3">
+                  <button onClick="{{ t.on }}" style="text-align:left;padding:14px;border-radius:12px;border:{{ t.bd }};background:{{ t.bg }};cursor:pointer;display:flex;flex-direction:column;gap:4px;color:#12263A"><b style="font-size:14px">{{ t.label }}</b><span style="font-size:12.5px;color:#6B7684;line-height:1.45">{{ t.desc }}</span></button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex;gap:14px;flex-wrap:wrap">
+              <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:700">Nilai</span><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:140px;max-width:100%"><span style="font-size:14px;font-weight:700;color:#6B7684">{{ edPrefix }}</span><input value="{{ ed.val }}" onChange="{{ onEdVal }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"><span style="font-size:13px;color:#6B7684;white-space:nowrap">{{ edSuffix }}</span></div></div>
+              <sc-if value="{{ edIsWindow }}"><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:700">Jam berlaku</span><div style="display:flex;align-items:center;gap:8px"><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:120px;max-width:100%"><input value="{{ ed.wFrom }}" onChange="{{ onEdWFrom }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"></div><span style="color:#6B7684">–</span><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:120px;max-width:100%"><input value="{{ ed.wTo }}" onChange="{{ onEdWTo }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"></div></div></div></sc-if>
+              <sc-if value="{{ edIsChallenge }}"><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:700">Target hari check-in</span><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:140px;max-width:100%"><input value="{{ ed.days }}" onChange="{{ onEdDays }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"><span style="font-size:13px;color:#6B7684;white-space:nowrap">hari</span></div></div></sc-if>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+              <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:700">Mulai</span><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ ed.start }}" onChange="{{ onEdStart }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"><span style="font-size:13px;color:#6B7684;white-space:nowrap">WIB</span></div><span style="font-size:12px;color:{{ edStartC }}">{{ edStartHelp }}</span></div>
+              <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:700">Selesai</span><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ ed.end }}" onChange="{{ onEdEnd }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"><span style="font-size:13px;color:#6B7684;white-space:nowrap">WIB</span></div><span style="font-size:12px;color:{{ edEndC }}">{{ edEndHelp }}</span></div>
+            </div>
+            <sc-if value="{{ edConflict }}">
+              <div style="display:flex;gap:10px;padding:12px 14px;border-radius:12px;background:#FEF4F5;border:1px solid #F6C7CC;font-size:13px;color:#9F1239;line-height:1.5"><b style="flex-shrink:0">Bentrok</b><span>{{ edConflictText }}</span></div>
+            </sc-if>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Target user</b><span style="font-size:13px;color:#6B7684;line-height:1.5">Kosongkan semua untuk semua user.</span></div></div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <sc-for list="{{ segs }}" as="s" hint-placeholder-count="5">
+                <button onClick="{{ s.on }}" style="height:34px;padding:0 14px;border-radius:999px;border:1px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};font-size:13px;font-weight:700;cursor:pointer">{{ s.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:4px 20px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;border-bottom:1px solid #EDF1F5;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Push notifikasi saat event mulai</span></div><button onClick="{{ togPushStart }}" style="width:42px;height:24px;border:none;border-radius:999px;background:{{ pushStartBg }};position:relative;cursor:pointer;flex-shrink:0;transition:background .15s"><span style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transform:{{ pushStartX }};transition:transform .15s"></span></button></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Pengingat 3 jam sebelum berakhir</span><span style="font-size:12.5px;color:#6B7684;line-height:1.5">Hanya ke user yang belum check-in hari itu.</span></div><button onClick="{{ togPush3h }}" style="width:42px;height:24px;border:none;border-radius:999px;background:{{ push3hBg }};position:relative;cursor:pointer;flex-shrink:0;transition:background .15s"><span style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transform:{{ push3hX }};transition:transform .15s"></span></button></div>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Banner event</b><span style="font-size:13px;color:#6B7684;line-height:1.5">716×220 px. Tampil di kartu event halaman Poin Saya.</span></div></div>
+            <div style="position:relative;height:150px;border-radius:12px;overflow:hidden"><image-slot id="event-banner" shape="rounded" radius="12" placeholder="Drop banner event"></image-slot></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:center;position:sticky;top:88px"><span style="font-size:12px;font-weight:700;color:#6B7684;text-transform:uppercase;letter-spacing:.05em">Preview pop-up</span><div style="width:281px;height:608px;position:relative;flex-shrink:0"><div style="position:absolute;top:0;left:0;width:390px;height:844px;transform:scale(.72);transform-origin:top left"><dc-import name="CheckinPhone" step="{{ pv1 }}" event="{{ pvEvent }}" hint-size="390px,844px"></dc-import></div></div></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isLevel }}">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:4px;max-width:640px"><h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em">Level</h1><p style="margin:0;font-size:14px;color:#6B7684;line-height:1.55">Level mengikuti tier Cybro Loyalty dan dihitung dari poin seumur hidup. Menukar atau kedaluwarsa poin tidak menurunkan level.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button onClick="{{ saveLevels }}" style="height:40px;padding:0 16px;border:none;border-radius:10px;background:#0B72C4;color:#fff;font:700 14px 'Plus Jakarta Sans';cursor:pointer;white-space:nowrap" style-hover="background:#095FA3">Simpan</button></div></div>
+      <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);overflow:hidden">
+        <div style="overflow-x:auto"><div style="min-width:860px">
+        <div style="display:grid;grid-template-columns:130px 160px 140px minmax(220px,1fr) 90px;gap:14px;padding:11px 18px;background:#F5F8FB;border-bottom:1px solid #E2E9F0;font-size:11.5px;font-weight:700;color:#6B7684;text-transform:uppercase;letter-spacing:.04em"><span>Level</span><span>Mulai dari</span><span>Bonus poin harian</span><span>Keuntungan</span><span>User</span></div>
+        <sc-for list="{{ levels }}" as="l" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:130px 160px 140px minmax(220px,1fr) 90px;gap:14px;padding:12px 18px;border-bottom:1px solid #EDF1F5;align-items:center;font-size:13.5px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="width:12px;height:12px;border-radius:50%;background:{{ l.c }}"></span><b>{{ l.n }}</b></div>
+            <div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ l.min }}" onChange="{{ l.onMin }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"><span style="font-size:13px;color:#6B7684;white-space:nowrap">poin</span></div><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:120px;max-width:100%"><span style="font-size:14px;font-weight:700;color:#6B7684">+</span><input value="{{ l.b }}" onChange="{{ l.onB }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"><span style="font-size:13px;color:#6B7684;white-space:nowrap">%</span></div>
+            <span style="color:#3C4A57">{{ l.perk }}</span><span style="font-variant-numeric:tabular-nums;color:#3C4A57">{{ l.users }}</span>
+          </div>
+        </sc-for>
+        </div></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isPopup }}">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:4px;max-width:640px"><h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em">Pop-up check-in</h1><p style="margin:0;font-size:14px;color:#6B7684;line-height:1.55">Atur kapan pop-up muncul di Beranda app dan isinya.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button onClick="{{ savePopup }}" style="height:40px;padding:0 16px;border:none;border-radius:10px;background:#0B72C4;color:#fff;font:700 14px 'Plus Jakarta Sans';cursor:pointer;white-space:nowrap" style-hover="background:#095FA3">Simpan</button></div></div>
+      <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex:1;min-width:min(100%,460px);display:flex;flex-direction:column;gap:14px">
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:4px 20px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;border-bottom:1px solid #EDF1F5;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Tampilkan pop-up</span><span style="font-size:12.5px;color:#6B7684;line-height:1.5">Kalau mati, check-in hanya lewat kartu di Beranda.</span></div><button onClick="{{ togPopOn }}" style="width:42px;height:24px;border:none;border-radius:999px;background:{{ popOnBg }};position:relative;cursor:pointer;flex-shrink:0;transition:background .15s"><span style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transform:{{ popOnX }};transition:transform .15s"></span></button></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;border-bottom:1px solid #EDF1F5;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Dahulukan pop-up tagihan</span><span style="font-size:12.5px;color:#6B7684;line-height:1.5">Kalau ada tagihan jatuh tempo, pop-up check-in ditunda ke sesi berikutnya.</span></div><button onClick="{{ togPrio }}" style="width:42px;height:24px;border:none;border-radius:999px;background:{{ prioBg }};position:relative;cursor:pointer;flex-shrink:0;transition:background .15s"><span style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transform:{{ prioX }};transition:transform .15s"></span></button></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Tunggu onboarding selesai</span><span style="font-size:12.5px;color:#6B7684;line-height:1.5">User baru tidak melihat pop-up sebelum onboarding selesai.</span></div><button onClick="{{ togOnb }}" style="width:42px;height:24px;border:none;border-radius:999px;background:{{ onbBg }};position:relative;cursor:pointer;flex-shrink:0;transition:background .15s"><span style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transform:{{ onbX }};transition:transform .15s"></span></button></div>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Teks</b></div></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:700">Judul</span><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ pop.title }}" onChange="{{ onPopTitle }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"></div></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:700">Label tombol</span><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ pop.cta }}" onChange="{{ onPopCta }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"></div></div>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Gambar</b><span style="font-size:13px;color:#6B7684;line-height:1.5">716×300 px. Sama dengan gambar yang tampil di app.</span></div></div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+              <div style="display:flex;flex-direction:column;gap:6px"><div style="position:relative;height:120px;border-radius:12px;overflow:hidden"><image-slot id="popup-hero" shape="rounded" radius="12" placeholder="Sebelum klaim"></image-slot></div><span style="font-size:12.5px;color:#6B7684">Sebelum klaim</span></div>
+              <div style="display:flex;flex-direction:column;gap:6px"><div style="position:relative;height:120px;border-radius:12px;overflow:hidden"><image-slot id="popup-success" shape="rounded" radius="12" placeholder="Sukses klaim"></image-slot></div><span style="font-size:12.5px;color:#6B7684">Sukses klaim</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:center;position:sticky;top:88px"><span style="font-size:12px;font-weight:700;color:#6B7684;text-transform:uppercase;letter-spacing:.05em">Preview di app</span><div style="width:281px;height:608px;position:relative;flex-shrink:0"><div style="position:absolute;top:0;left:0;width:390px;height:844px;transform:scale(.72);transform-origin:top left"><dc-import name="CheckinPhone" step="{{ pv1 }}" event="{{ pvNone }}" hint-size="390px,844px"></dc-import></div></div></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isBoard }}">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:4px;max-width:640px"><h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em">Peringkat</h1><p style="margin:0;font-size:14px;color:#6B7684;line-height:1.55">Atur papan peringkat yang tampil di app.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button onClick="{{ saveBoard }}" style="height:40px;padding:0 16px;border:none;border-radius:10px;background:#0B72C4;color:#fff;font:700 14px 'Plus Jakarta Sans';cursor:pointer;white-space:nowrap" style-hover="background:#095FA3">Simpan</button></div></div>
+      <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex:1;min-width:min(100%,460px);display:flex;flex-direction:column;gap:14px">
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:4px 20px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;border-bottom:1px solid #EDF1F5;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Papan poin bulan ini</span></div><button onClick="{{ togLbP }}" style="width:42px;height:24px;border:none;border-radius:999px;background:{{ lbPBg }};position:relative;cursor:pointer;flex-shrink:0;transition:background .15s"><span style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transform:{{ lbPX }};transition:transform .15s"></span></button></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;border-bottom:1px solid #EDF1F5;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Papan streak</span></div><button onClick="{{ togLbS }}" style="width:42px;height:24px;border:none;border-radius:999px;background:{{ lbSBg }};position:relative;cursor:pointer;flex-shrink:0;transition:background .15s"><span style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transform:{{ lbSX }};transition:transform .15s"></span></button></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;border-bottom:1px solid #EDF1F5;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Jumlah yang ditampilkan</span><span style="font-size:12.5px;color:#6B7684;line-height:1.5">Posisi user sendiri selalu tampil walau di luar daftar.</span></div><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:120px;max-width:100%"><span style="font-size:14px;font-weight:700;color:#6B7684">Top</span><input value="{{ lb.top }}" onChange="{{ onLbTop }}" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent;font-variant-numeric:tabular-nums"></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;border-bottom:1px solid #EDF1F5;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Tie-breaker</span><span style="font-size:12.5px;color:#6B7684;line-height:1.5">Kalau nilai sama.</span></div><span style="font-size:14px;font-weight:700">Check-in paling awal (sampai detik)</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;border-bottom:1px solid #EDF1F5;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Reset papan poin</span></div><span style="font-size:14px;font-weight:700;font-variant-numeric:tabular-nums">Tiap tanggal 1, 00:00:00 WIB</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 0;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px"><span style="font-size:14px;font-weight:700">Nama yang ditampilkan</span><span style="font-size:12.5px;color:#6B7684;line-height:1.5">Foto tidak dipakai.</span></div><div style="display:flex;padding:4px;border-radius:10px;background:#EEF2F6;gap:4px"><sc-for list="{{ nameModes }}" as="m" hint-placeholder-count="2"><button onClick="{{ m.on }}" style="height:32px;padding:0 12px;border:none;border-radius:8px;background:{{ m.bg }};color:{{ m.fg }};font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">{{ m.label }}</button></sc-for></div></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:center;position:sticky;top:88px"><span style="font-size:12px;font-weight:700;color:#6B7684;text-transform:uppercase;letter-spacing:.05em">Preview di app</span><div style="width:281px;height:608px;position:relative;flex-shrink:0"><div style="position:absolute;top:0;left:0;width:390px;height:844px;transform:scale(.72);transform-origin:top left"><dc-import name="CheckinPhone" step="{{ pv5 }}" event="{{ pvNone }}" hint-size="390px,844px"></dc-import></div></div></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isLog }}">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:4px;max-width:640px"><h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em">Log check-in</h1><p style="margin:0;font-size:14px;color:#6B7684;line-height:1.55">Semua klaim dicatat dengan jam server sampai detik. Dipakai untuk audit dan tie-breaker peringkat.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button onClick="{{ exportCsv }}" style="height:40px;padding:0 16px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;color:#12263A;font:700 14px 'Plus Jakarta Sans';cursor:pointer;white-space:nowrap" style-hover="background:#F5F8FB">Export CSV</button></div></div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:8px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:320px;max-width:100%"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7684" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg><input value="{{ q }}" onChange="{{ onQ }}" placeholder="Cari nama atau ID pelanggan" style="border:none;outline:none;flex:1;min-width:0;font:500 14px 'Plus Jakarta Sans';color:#12263A;background:transparent"></div>
+        <div style="display:flex;align-items:center;gap:10px;height:40px;padding:0 14px;border-radius:10px;background:#fff;border:1px solid #D5DEE7"><button onClick="{{ togLive }}" style="width:42px;height:24px;border:none;border-radius:999px;background:{{ liveBg }};position:relative;cursor:pointer;flex-shrink:0;transition:background .15s"><span style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transform:{{ liveX }};transition:transform .15s"></span></button><span style="font-size:13.5px;font-weight:700">Live</span><span style="width:8px;height:8px;border-radius:50%;background:{{ liveDot }}"></span></div>
+        <span style="font-size:13px;color:#6B7684">{{ logCount }}</span>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);overflow:hidden">
+        <div style="overflow-x:auto"><div style="min-width:900px">
+        <div style="display:grid;grid-template-columns:190px minmax(0,1.3fr) 80px minmax(0,1.2fr) 70px minmax(0,1fr) 90px;gap:14px;padding:11px 18px;background:#F5F8FB;border-bottom:1px solid #E2E9F0;font-size:11.5px;font-weight:700;color:#6B7684;text-transform:uppercase;letter-spacing:.04em"><span>Waktu (WIB)</span><span>Pelanggan</span><span>Streak</span><span>Rincian</span><span>Poin</span><span>Event</span><span>Perangkat</span></div>
+        <sc-for list="{{ logRows }}" as="l" hint-placeholder-count="10">
+          <div style="display:grid;grid-template-columns:190px minmax(0,1.3fr) 80px minmax(0,1.2fr) 70px minmax(0,1fr) 90px;gap:14px;padding:12px 18px;border-bottom:1px solid #EDF1F5;font-size:13.5px;align-items:center;background:{{ l.hl }};transition:background 1s">
+            <span style="font-variant-numeric:tabular-nums;font-weight:600">{{ l.t }}</span><div style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:700">{{ l.name }}</span><span style="font-size:12px;color:#6B7684">{{ l.id }}</span></div><span>{{ l.streak }}</span><span style="font-size:12.5px;color:#6B7684;font-variant-numeric:tabular-nums">{{ l.calc }}</span><b style="color:#15803D">+{{ l.poin }}</b><span style="color:#3C4A57">{{ l.ev }}</span><span style="color:#3C4A57">{{ l.dev }}</span>
+          </div>
+        </sc-for>
+        </div></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isInteg }}">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap"><div style="display:flex;flex-direction:column;gap:4px;max-width:680px"><h1 style="margin:0;font-size:24px;font-weight:800">Integrasi data pelanggan</h1><p style="margin:0;font-size:14px;color:#6B7684;line-height:1.55">Sistem check-in hanya menyimpan <b style="color:#12263A">customer_id</b>. Nama, paket, area, dan tier Cybro diambil dari API pelanggan CBN saat dibutuhkan, lewat server — tidak pernah dari browser.</p></div><button onClick="{{ saveInteg }}" style="height:40px;padding:0 16px;border:none;border-radius:10px;background:#0B72C4;color:#fff;font:700 14px 'Plus Jakarta Sans';cursor:pointer">Simpan</button></div>
+
+      <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Cara kerja</b></div></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div style="flex:1;min-width:170px;padding:14px;border-radius:12px;background:#F5F8FB;display:flex;flex-direction:column;gap:6px"><span style="width:26px;height:26px;border-radius:8px;background:#E8F3FC;color:#0B72C4;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center">1</span><b style="font-size:14px">App kirim check-in</b><span style="font-size:12.5px;color:#3C4A57;line-height:1.5">User sudah login di app CBN. App kirim token sesi, bukan customer_id dari form.</span></div>
+          <div style="flex:1;min-width:170px;padding:14px;border-radius:12px;background:#F5F8FB;display:flex;flex-direction:column;gap:6px"><span style="width:26px;height:26px;border-radius:8px;background:#E8F3FC;color:#0B72C4;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center">2</span><b style="font-size:14px">Server verifikasi token</b><span style="font-size:12.5px;color:#3C4A57;line-height:1.5">Server check-in validasi token ke auth CBN, ambil customer_id dari token, catat jam server sampai detik.</span></div>
+          <div style="flex:1;min-width:170px;padding:14px;border-radius:12px;background:#F5F8FB;display:flex;flex-direction:column;gap:6px"><span style="width:26px;height:26px;border-radius:8px;background:#E8F3FC;color:#0B72C4;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center">3</span><b style="font-size:14px">Ambil profil</b><span style="font-size:12.5px;color:#3C4A57;line-height:1.5">Admin buka dashboard → server panggil API pelanggan untuk ID yang tampil (batch), simpan di cache 1 jam.</span></div>
+          <div style="flex:1;min-width:170px;padding:14px;border-radius:12px;background:#F5F8FB;display:flex;flex-direction:column;gap:6px"><span style="width:26px;height:26px;border-radius:8px;background:#E8F3FC;color:#0B72C4;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center">4</span><b style="font-size:14px">Tampilkan</b><span style="font-size:12.5px;color:#3C4A57;line-height:1.5">Dashboard & log menampilkan nama + ID. Leaderboard di app hanya inisial.</span></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:14px;align-items:start">
+        <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Koneksi API pelanggan</b><span style="font-size:13px;color:#6B7684;line-height:1.5">Disimpan di server, tidak dikirim ke app maupun browser admin.</span></div><span style="display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;background:{{ igStBg }};color:{{ igStFg }};font-size:12px;font-weight:700;white-space:nowrap"><span style="width:7px;height:7px;border-radius:50%;background:{{ igStFg }}"></span>{{ igStatus }}</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:700">Base URL</span><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ ig.url }}" onChange="{{ onIgUrl }}" placeholder="" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent"></div></div>
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:700">Endpoint ambil pelanggan</span><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><span style="font-size:13px;font-weight:700;color:#6B7684">GET</span><input value="{{ ig.path }}" onChange="{{ onIgPath }}" placeholder="" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent"></div><span style="font-size:12px;color:#6B7684">Pakai <code>{ids}</code> untuk batch, contoh <code>/customers?ids={ids}</code></span></div>
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:700">Autentikasi</span>
+            <div style="display:flex;padding:4px;border-radius:10px;background:#EEF2F6;gap:4px;align-self:flex-start"><sc-for list="{{ igAuths }}" as="a" hint-placeholder-count="2"><button onClick="{{ a.on }}" style="height:32px;padding:0 12px;border:none;border-radius:8px;background:{{ a.bg }};color:{{ a.fg }};font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">{{ a.label }}</button></sc-for></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:700">{{ igKeyLabel }}</span><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ igKeyMasked }}" onChange="{{ onIgKey }}" placeholder="" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent"></div></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:700">Cache profil</span><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ ig.cache }}" onChange="{{ onIgCache }}" placeholder="" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent"></div></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13.5px;font-weight:700">Batas waktu</span><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ ig.timeout }}" onChange="{{ onIgTimeout }}" placeholder="" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent"></div></div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Pemetaan field</b><span style="font-size:13px;color:#6B7684;line-height:1.5">Sesuaikan dengan nama field di response API Anda.</span></div></div>
+            <div style="display:grid;grid-template-columns:150px 20px minmax(0,1fr);gap:10px;font-size:11.5px;font-weight:700;color:#6B7684;text-transform:uppercase;letter-spacing:.04em"><span>Field check-in</span><span></span><span>Field di API Anda</span></div>
+            <sc-for list="{{ igMap }}" as="m" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:150px 20px minmax(0,1fr);gap:10px;align-items:center">
+                <div style="display:flex;flex-direction:column"><code style="font-size:13px;font-weight:700;color:#0E4C86">{{ m.k }}</code><span style="font-size:11.5px;color:#6B7684">{{ m.use }}</span></div>
+                <span style="color:#6B7684">→</span><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ m.v }}" onChange="{{ m.on }}" placeholder="" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent"></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Tes koneksi</b><span style="font-size:13px;color:#6B7684;line-height:1.5">Masukkan satu customer ID untuk cek pemetaan.</span></div></div>
+            <div style="display:flex;gap:10px"><div style="display:flex;align-items:center;gap:6px;height:40px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;padding:0 12px;width:100%;max-width:100%"><input value="{{ ig.testId }}" onChange="{{ onIgTestId }}" placeholder="30110910" style="border:none;outline:none;flex:1;min-width:0;width:100%;font:600 14px 'Plus Jakarta Sans';color:#12263A;background:transparent"></div><button onClick="{{ runTest }}" style="height:40px;padding:0 16px;border:1px solid #D5DEE7;border-radius:10px;background:#fff;color:#12263A;font:700 14px 'Plus Jakarta Sans';cursor:pointer;white-space:nowrap">{{ testLabel }}</button></div>
+            <sc-if value="{{ hasTest }}">
+              <div style="border:1px solid {{ testBd }};border-radius:12px;overflow:hidden">
+                <div style="padding:10px 14px;background:{{ testBg }};font-size:13px;font-weight:700;color:{{ testFg }};display:flex;justify-content:space-between"><span>{{ testHead }}</span><span style="font-variant-numeric:tabular-nums">{{ testMs }}</span></div>
+                <sc-for list="{{ testRows }}" as="t" hint-placeholder-count="5">
+                  <div style="display:grid;grid-template-columns:130px minmax(0,1fr);gap:10px;padding:9px 14px;border-top:1px solid #EDF1F5;font-size:13px"><code style="color:#6B7684">{{ t.k }}</code><b>{{ t.v }}</b></div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E2E9F0;border-radius:16px;box-shadow:0 4px 14px rgba(14,34,51,.05);padding:20px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px;font-weight:800">Keamanan & privasi</b></div></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;font-size:13.5px;color:#3C4A57;line-height:1.55">
+          <span>• customer_id selalu diambil dari token sesi di server — user tidak bisa check-in atas nama orang lain.</span>
+          <span>• Kredensial API hanya di server check-in; browser admin cuma terima data yang sudah dipetakan.</span>
+          <span>• Kalau API pelanggan lambat/mati, dashboard tetap tampil dengan ID saja, nama menyusul.</span>
+          <span>• Akses admin per peran: CS lihat log, Marketing kelola event, hanya Admin ubah integrasi.</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  </main>
+</div>
+
+<sc-if value="{{ toast }}">
+  <div style="position:fixed;bottom:24px;right:24px;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;background:#12263A;color:#fff;font-size:14px;font-weight:600;box-shadow:0 12px 30px rgba(14,34,51,.3)"><span style="width:20px;height:20px;border-radius:50%;background:#22C55E;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg></span>{{ toast }}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NAMES = ['Dimas A.', 'Sari P.', 'Bayu K.', 'Nadia R.', 'Fikri H.', 'Ayu L.', 'Rizky M.', 'Putri W.', 'Hendra S.', 'Maya T.', 'Andi S.', 'Lina K.', 'Yoga P.', 'Rina D.'];
+const EVN = ['—', 'Double Poin Akhir Pekan', 'Early Bird', '—'];
+const DEF_RULES = { base: '10', cycle: '50', expiry: '12', reset: '00:00:00', tiers: [{ from: '1', to: '6', m: '1' }, { from: '7', to: '13', m: '1,2' }, { from: '14', to: '29', m: '1,5' }, { from: '30', to: '∞', m: '2' }], ms: [{ d: '7', b: '100' }, { d: '14', b: '200' }, { d: '30', b: '500' }, { d: '60', b: '1000' }, { d: '100', b: '2000' }] };
+const EV0 = [
+  { name: 'Double Poin Akhir Pekan', type: 'multiplier', val: '×2', start: '2026-10-10 00:00:00', end: '2026-10-11 23:59:59', seg: 'Semua user', status: 'Aktif', part: '8.214' },
+  { name: 'Early Bird', type: 'time_window', val: '+20', start: '2026-10-01 00:00:00', end: '2026-10-31 23:59:59', seg: 'Semua user', status: 'Aktif', part: '3.902' },
+  { name: 'Tantangan HUT CBN', type: 'challenge', val: '+500', start: '2026-10-20 00:00:00', end: '2026-10-26 23:59:59', seg: 'Cybro Silver+', status: 'Terjadwal', part: '—' },
+  { name: 'Speed Week', type: 'multiplier', val: '×1,5', start: '—', end: '—', seg: 'Jakarta', status: 'Draft', part: '—' },
+  { name: 'Ramadan Streak', type: 'challenge', val: '+300', start: '2026-02-18 00:00:00', end: '2026-03-19 23:59:59', seg: 'Semua user', status: 'Selesai', part: '21.448' },
+];
+const TYPES = { multiplier: ['Multiplier', 'Poin harian dikali nilai event.', '×', ''], time_window: ['Jam tertentu', 'Bonus kalau check-in di rentang jam.', '+', 'poin'], challenge: ['Tantangan', 'Bonus sekali setelah N hari check-in.', '+', 'poin'] };
+const STS = { Aktif: ['#E8F7EE', '#15803D'], Terjadwal: ['#E8F3FC', '#0B72C4'], Draft: ['#FFF6E0', '#8A5A00'], Selesai: ['#EEF2F6', '#6B7684'] };
+const SEGS = ['Cybro Silver+', 'Jakarta', 'Surabaya', 'Batam', 'Paket 100 Mbps+'];
+const pad = n => String(n).padStart(2, '0');
+const fdt = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+const num = v => parseFloat(String(v).replace(',', '.')) || 0;
+let SEQ = 0;
+function mkRow(ts) {
+  const i = SEQ++, st = 1 + (i * 37) % 140, base = st >= 30 ? 20 : st >= 14 ? 15 : st >= 7 ? 12 : 10;
+  const ev = EVN[i % 4], evb = ev === 'Double Poin Akhir Pekan' ? base : ev === 'Early Bird' ? 20 : 0;
+  return { key: i, t: fdt(new Date(ts)), name: NAMES[i % NAMES.length], id: '3011' + String(1000 + (i * 7919) % 9000), streak: st + ' hari', calc: base + (evb ? ' + ' + evb + ' event' : ''), poin: base + evb, ev, dev: i % 3 ? 'Android' : 'iOS', born: ts };
+}
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    const now = Date.now(), rows = [];
+    let t = now - 4000;
+    for (let i = 0; i < 18; i++) { rows.push(mkRow(t)); t -= 2000 + (i * 5333) % 21000; }
+    this.state = { page: 'dash', now, rules: JSON.parse(JSON.stringify(DEF_RULES)), saved: JSON.stringify(DEF_RULES), events: EV0, ed: null, levels: [{ n: 'Basic', min: '0', b: '0', perk: 'Poin dasar', c: '#8FD0F5', users: '61.204' }, { n: 'Silver', min: '1000', b: '5', perk: '+5% poin harian', c: '#C9D3DD', users: '18.930' }, { n: 'Gold', min: '5000', b: '10', perk: '+10% · 1 Streak Freeze/bulan', c: '#F5C451', users: '4.712' }, { n: 'Platinum', min: '15000', b: '20', perk: '+20% · 2 Streak Freeze/bulan', c: '#7C8CF8', users: '608' }], pop: { on: true, prio: true, onb: true, title: 'Check-in Harian', cta: 'Klaim Poin' }, lb: { p: true, s: true, top: '10', mode: 'ini' }, log: rows, live: true, q: '', toast: null, added: 0, ig: { url: 'https://api.cbn.id/v2', path: '/customers?ids={ids}', auth: 'key', key: 'cbn_live_8f2a91c04de7b6', cache: '1 jam', timeout: '3 detik', status: 'ok', testId: '30110910', testing: false, test: null, map: [{ k: 'customer_id', use: 'kunci utama', v: 'id_pelanggan' }, { k: 'nama', use: 'dashboard & log', v: 'nama_lengkap' }, { k: 'paket', use: 'segmen event', v: 'produk.nama_paket' }, { k: 'area', use: 'segmen event', v: 'alamat.kota' }, { k: 'cybro_tier', use: 'level & bonus', v: 'loyalty.tier' }, { k: 'status', use: 'hanya akun aktif', v: 'status_layanan' }] } };
+  }
+  componentDidMount() {
+    this.iv = setInterval(() => {
+      const now = Date.now();
+      if (this.state.live && Math.random() < .45) this.setState(s => ({ now, log: [mkRow(now), ...s.log].slice(0, 60), added: s.added + 1 }));
+      else this.setState({ now });
+    }, 1000);
+  }
+  componentWillUnmount() { clearInterval(this.iv); clearTimeout(this.tt); }
+  toast(m) { this.setState({ toast: m }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: null }), 2600); }
+  G(o) { this.setState(s => ({ ig: { ...s.ig, ...o } })); }
+  R(o) { this.setState(s => ({ rules: { ...s.rules, ...o } })); }
+  E(o) { this.setState(s => ({ ed: { ...s.ed, ...o } })); }
+  renderVals() {
+    const S = this.state, { rules: r, ed, now } = S;
+    const fmt = n => Math.round(n).toLocaleString('id-ID');
+    const tog = v => ({ bg: v ? '#0B72C4' : '#C9D3DD', x: v ? 'translateX(18px)' : 'none' });
+    const val = e => e.target.value;
+    const go = p => () => this.setState({ page: p, ed: p === 'event' ? null : S.ed });
+    const PAGES = [['dash', 'Dashboard'], ['rules', 'Aturan Poin'], ['event', 'Event'], ['level', 'Level'], ['popup', 'Pop-up'], ['board', 'Peringkat'], ['log', 'Log Check-in'], ['integ', 'Integrasi']];
+    const actCount = S.events.filter(e => e.status === 'Aktif').length;
+    const nav = PAGES.map(([k, l]) => { const a = S.page === k; return { label: l, on: go(k), bg: a ? '#E8F3FC' : 'transparent', fg: a ? '#0B72C4' : '#3C4A57', fw: a ? 800 : 600, badge: k === 'event' ? actCount + ' aktif' : k === 'log' && S.live ? 'LIVE' : '', badgeStyle: (k === 'event' || (k === 'log' && S.live)) ? 'background:#E8F3FC;padding:2px 7px;border-radius:999px' : '' }; });
+    // rules sim
+    const multAt = d => { const t = r.tiers.find(t => d >= num(t.from) && (t.to === '∞' || d <= num(t.to))); return t ? num(t.m) : 1; };
+    const msMap = {}; r.ms.forEach(m => { msMap[num(m.d)] = num(m.b); });
+    const simRaw = []; for (let d = 1; d <= 30; d++) { const b = Math.round(num(r.base) * multAt(d)), c = d % 7 === 0 ? num(r.cycle) : 0, m = msMap[d] || 0; simRaw.push({ v: b + c + m, b, c, m }); }
+    const mx = Math.max(1, ...simRaw.map(x => x.v));
+    const sim = simRaw.map(x => ({ h: Math.max(2, x.v / mx * 100) + '%', bg: x.m ? '#F5A700' : x.c ? '#0B72C4' : '#BFDCF3', top: x.m ? '+' + fmt(x.v) : '' }));
+    const tiers = r.tiers.map((t, i) => { const set = k => e => { const v = val(e); this.setState(s => ({ rules: { ...s.rules, tiers: s.rules.tiers.map((x, j) => j === i ? { ...x, [k]: v } : x) } })); }; return { ...t, onFrom: set('from'), onTo: set('to'), onM: set('m') }; });
+    const milestones = r.ms.map((m, i) => { const set = k => e => { const v = val(e); this.setState(s => ({ rules: { ...s.rules, ms: s.rules.ms.map((x, j) => j === i ? { ...x, [k]: v } : x) } })); }; return { ...m, onD: set('d'), onB: set('b'), onDel: () => this.setState(s => ({ rules: { ...s.rules, ms: s.rules.ms.filter((_, j) => j !== i) } })) }; });
+    // events
+    const events = S.events.map(e => ({ ...e, typeLabel: TYPES[e.type][0], sbg: STS[e.status][0], sfg: STS[e.status][1] }));
+    const activeEvents = S.events.filter(e => e.status === 'Aktif');
+    let edv = {};
+    if (ed) {
+      const re = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
+      const okS = re.test(ed.start), okE = re.test(ed.end), order = okS && okE && ed.end > ed.start;
+      const clash = ed.type === 'multiplier' && okS && okE ? S.events.find(e => e.type === 'multiplier' && (e.status === 'Aktif' || e.status === 'Terjadwal') && e.start !== '—' && ed.start <= e.end && ed.end >= e.start) : null;
+      edv = {
+        edNameLen: ed.name.length,
+        edTypes: Object.keys(TYPES).map(k => ({ label: TYPES[k][0], desc: TYPES[k][1], on: () => this.E({ type: k, val: k === 'multiplier' ? '2' : k === 'time_window' ? '20' : '500' }), bd: ed.type === k ? '2px solid #0B72C4' : '1px solid #D5DEE7', bg: ed.type === k ? '#F1F7FD' : '#fff' })),
+        edPrefix: TYPES[ed.type][2], edSuffix: TYPES[ed.type][3], edIsWindow: ed.type === 'time_window', edIsChallenge: ed.type === 'challenge',
+        edStartHelp: okS ? 'Format YYYY-MM-DD HH:MM:SS' : 'Format salah · contoh 2026-10-20 00:00:00', edStartC: okS ? '#6B7684' : '#E11D2E',
+        edEndHelp: !okE ? 'Format salah · contoh 2026-10-26 23:59:59' : order ? 'Durasi ' + Math.max(1, Math.round((new Date(ed.end.replace(' ', 'T')) - new Date(ed.start.replace(' ', 'T'))) / 864e5)) + ' hari' : 'Harus setelah waktu mulai', edEndC: okE && order ? '#6B7684' : '#E11D2E',
+        edConflict: !!clash, edConflictText: clash ? 'Periode ini tumpang tindih dengan “' + clash.name + '” (' + clash.start + ' – ' + clash.end + '). Maks. 1 multiplier berjalan bersamaan.' : '',
+        segs: SEGS.map(l => { const on = ed.seg.includes(l); return { label: l, on: () => this.E({ seg: on ? ed.seg.filter(x => x !== l) : [...ed.seg, l] }), bg: on ? '#0B72C4' : '#fff', fg: on ? '#fff' : '#3C4A57', bd: on ? '#0B72C4' : '#D5DEE7' }; }),
+        pushStartBg: tog(ed.pushStart).bg, pushStartX: tog(ed.pushStart).x, push3hBg: tog(ed.push3h).bg, push3hX: tog(ed.push3h).x,
+        pvEvent: ed.type === 'multiplier' ? 'double' : ed.type === 'time_window' ? 'earlybird' : 'challenge',
+      };
+      edv._valid = okS && okE && order && !clash && ed.name.trim();
+    }
+    const saveEv = status => () => {
+      if (status !== 'Draft' && !edv._valid) { this.toast('Periksa nama, periode, atau bentrok event'); return; }
+      const v = TYPES[ed.type][2] + ed.val;
+      this.setState(s => ({ events: [{ name: ed.name || 'Event tanpa nama', type: ed.type, val: v.replace('.', ','), start: ed.start, end: ed.end, seg: ed.seg.length ? ed.seg.join(', ') : 'Semua user', status, part: '—' }, ...s.events], ed: null }));
+      this.toast(status === 'Draft' ? 'Draft event disimpan' : 'Event dijadwalkan · push notifikasi disiapkan');
+    };
+    // log
+    const q = S.q.trim().toLowerCase();
+    const rowsF = S.log.filter(l => !q || l.name.toLowerCase().includes(q) || l.id.includes(q));
+    const decorate = l => ({ ...l, hl: now - l.born < 2500 ? '#F1F7FD' : '#fff' });
+    const hrs = [120, 60, 40, 35, 80, 640, 1420, 1680, 1210, 820, 610, 540, 520, 480, 450, 470, 520, 610, 720, 880, 940, 760, 480, 260];
+    const hNow = new Date(now).getHours(), hmx = Math.max(...hrs);
+    const P = S.pop, LB = S.lb;
+    const lvl = S.levels.map((l, i) => { const set = k => e => { const v = val(e); this.setState(s => ({ levels: s.levels.map((x, j) => j === i ? { ...x, [k]: v } : x) })); }; return { ...l, onMin: set('min'), onB: set('b') }; });
+    const d = new Date(now);
+    return {
+      nav, pageTitle: PAGES.find(p => p[0] === S.page)[1] + (S.page === 'event' && ed ? ' / Buat event' : ''),
+      clock: pad(d.getDate()) + ' Okt ' + d.getFullYear() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()),
+      isDash: S.page === 'dash', isRules: S.page === 'rules', isEventList: S.page === 'event' && !ed, isEventEdit: S.page === 'event' && !!ed, isLevel: S.page === 'level', isPopup: S.page === 'popup', isBoard: S.page === 'board', isLog: S.page === 'log', isInteg: S.page === 'integ',
+      ig: S.ig, igKeyMasked: S.ig.key ? S.ig.key.slice(0, 4) + '•'.repeat(Math.max(0, S.ig.key.length - 8)) + S.ig.key.slice(-4) : '',
+      igKeyLabel: S.ig.auth === 'key' ? 'API key' : 'Client secret',
+      igAuths: [['key', 'API key'], ['oauth', 'OAuth client credentials']].map(([k, l]) => ({ label: l, on: () => this.G({ auth: k }), bg: S.ig.auth === k ? '#fff' : 'transparent', fg: S.ig.auth === k ? '#0B72C4' : '#6B7684' })),
+      igStatus: S.ig.status === 'ok' ? 'Terhubung · 142 ms' : S.ig.status === 'fail' ? 'Gagal terhubung' : 'Belum dites', igStBg: S.ig.status === 'ok' ? '#E8F7EE' : S.ig.status === 'fail' ? '#FEF4F5' : '#EEF2F6', igStFg: S.ig.status === 'ok' ? '#15803D' : S.ig.status === 'fail' ? '#E11D2E' : '#6B7684',
+      igMap: S.ig.map.map((m, i) => ({ ...m, on: e => { const v = val(e); this.setState(s => ({ ig: { ...s.ig, map: s.ig.map.map((x, j) => j === i ? { ...x, v } : x) } })); } })),
+      onIgUrl: e => this.G({ url: val(e) }), onIgPath: e => this.G({ path: val(e) }), onIgKey: e => this.G({ key: val(e).includes('•') ? S.ig.key : val(e) }), onIgCache: e => this.G({ cache: val(e) }), onIgTimeout: e => this.G({ timeout: val(e) }), onIgTestId: e => this.G({ testId: val(e) }),
+      testLabel: S.ig.testing ? 'Mengetes…' : 'Tes',
+      runTest: () => { if (S.ig.testing) return; this.G({ testing: true, test: null }); setTimeout(() => { const id = S.ig.testId.trim(); const ok = /^\d{6,10}$/.test(id); this.G({ testing: false, status: ok ? 'ok' : 'fail', test: ok ? { id } : { err: true } }); }, 800); },
+      hasTest: !!S.ig.test,
+      testHead: S.ig.test && !S.ig.test.err ? '200 OK · data ditemukan' : '404 · customer ID tidak ditemukan',
+      testMs: S.ig.test && !S.ig.test.err ? '142 ms' : '88 ms',
+      testBg: S.ig.test && !S.ig.test.err ? '#E8F7EE' : '#FEF4F5', testFg: S.ig.test && !S.ig.test.err ? '#15803D' : '#E11D2E', testBd: S.ig.test && !S.ig.test.err ? '#BFE5CC' : '#F6C7CC',
+      testRows: S.ig.test && !S.ig.test.err ? [['customer_id', S.ig.test.id], ['nama', 'Dian Anggraeni'], ['paket', 'CBN Fiber 100 New'], ['area', 'Jakarta Barat'], ['cybro_tier', 'Basic'], ['status', 'Active']].map(([k, v]) => ({ k, v })) : [],
+      saveInteg: () => this.toast('Integrasi disimpan'),
+      kpis: [
+        { label: 'Check-in hari ini', value: fmt(12480 + S.added), delta: '▲ 6,2% dari kemarin', dc: '#15803D' },
+        { label: 'Dari user aktif hari ini', value: '38,4%', delta: '▲ 1,1 poin', dc: '#15803D' },
+        { label: 'Rata-rata streak', value: '9,4 hari', delta: '▼ 0,3 hari', dc: '#E11D2E' },
+        { label: 'Poin dibagikan hari ini', value: fmt(184230 + S.added * 18), delta: 'termasuk 41.020 dari event', dc: '#6B7684' },
+      ],
+      hours: hrs.map((v, i) => ({ h: (i > hNow ? 3 : v / hmx * 100) + '%', bg: i === hNow ? '#0B72C4' : i > hNow ? '#EDF1F5' : '#BFDCF3' })),
+      activeEvents, goEvent: go('event'), goLog: go('log'),
+      logTop: rowsF.slice(0, 6).map(decorate), logRows: rowsF.slice(0, 30).map(decorate), logCount: rowsF.length + ' baris ditampilkan',
+      q: S.q, onQ: e => this.setState({ q: val(e) }),
+      togLive: () => this.setState(s => ({ live: !s.live })), liveBg: tog(S.live).bg, liveX: tog(S.live).x, liveDot: S.live ? '#22C55E' : '#C9D3DD',
+      exportCsv: () => this.toast('CSV disiapkan · ' + rowsF.length + ' baris'),
+      r, tiers, milestones, sim, simTotal: fmt(simRaw.reduce((a, x) => a + x.v, 0)), simD1: fmt(simRaw[0].v), simD30: fmt(simRaw[29].v),
+      onBase: e => this.R({ base: val(e) }), onCycle: e => this.R({ cycle: val(e) }), onExpiry: e => this.R({ expiry: val(e) }), onReset: e => this.R({ reset: val(e) }),
+      addMs: () => this.setState(s => ({ rules: { ...s.rules, ms: [...s.rules.ms, { d: '', b: '' }] } })),
+      rulesDirty: JSON.stringify(r) !== S.saved,
+      resetRules: () => this.setState(s => ({ rules: JSON.parse(s.saved) })),
+      saveRules: () => { this.setState(s => ({ saved: JSON.stringify(s.rules) })); this.toast('Aturan poin disimpan · berlaku mulai reset berikutnya'); },
+      events, newEvent: () => this.setState({ ed: { name: '', type: 'multiplier', val: '2', start: '2026-10-24 00:00:00', end: '2026-10-25 23:59:59', wFrom: '05:00:00', wTo: '09:00:00', days: '5', seg: [], pushStart: true, push3h: true } }),
+      cancelEvent: () => this.setState({ ed: null }), draftEvent: ed ? saveEv('Draft') : null, scheduleEvent: ed ? saveEv('Terjadwal') : null,
+      ed: ed || {}, ...edv,
+      onEdName: e => this.E({ name: val(e).slice(0, 28) }), onEdVal: e => this.E({ val: val(e) }), onEdStart: e => this.E({ start: val(e) }), onEdEnd: e => this.E({ end: val(e) }),
+      onEdWFrom: e => this.E({ wFrom: val(e) }), onEdWTo: e => this.E({ wTo: val(e) }), onEdDays: e => this.E({ days: val(e) }),
+      togPushStart: () => this.E({ pushStart: !ed.pushStart }), togPush3h: () => this.E({ push3h: !ed.push3h }),
+      pv1: 1, pv5: 5, pvNone: 'none',
+      levels: lvl, saveLevels: () => this.toast('Level disimpan'),
+      pop: P, onPopTitle: e => this.setState(s => ({ pop: { ...s.pop, title: val(e) } })), onPopCta: e => this.setState(s => ({ pop: { ...s.pop, cta: val(e) } })),
+      togPopOn: () => this.setState(s => ({ pop: { ...s.pop, on: !s.pop.on } })), popOnBg: tog(P.on).bg, popOnX: tog(P.on).x,
+      togPrio: () => this.setState(s => ({ pop: { ...s.pop, prio: !s.pop.prio } })), prioBg: tog(P.prio).bg, prioX: tog(P.prio).x,
+      togOnb: () => this.setState(s => ({ pop: { ...s.pop, onb: !s.pop.onb } })), onbBg: tog(P.onb).bg, onbX: tog(P.onb).x,
+      savePopup: () => this.toast('Pengaturan pop-up disimpan'),
+      lb: LB, onLbTop: e => this.setState(s => ({ lb: { ...s.lb, top: val(e) } })),
+      togLbP: () => this.setState(s => ({ lb: { ...s.lb, p: !s.lb.p } })), lbPBg: tog(LB.p).bg, lbPX: tog(LB.p).x,
+      togLbS: () => this.setState(s => ({ lb: { ...s.lb, s: !s.lb.s } })), lbSBg: tog(LB.s).bg, lbSX: tog(LB.s).x,
+      nameModes: [['ini', 'Nama + inisial'], ['anon', 'Inisial saja']].map(([k, l]) => ({ label: l, on: () => this.setState(s => ({ lb: { ...s.lb, mode: k } })), bg: LB.mode === k ? '#fff' : 'transparent', fg: LB.mode === k ? '#0B72C4' : '#6B7684' })),
+      saveBoard: () => this.toast('Pengaturan peringkat disimpan'),
+      toast: S.toast,
+    };
+  }
+}
+</script>
+</body>
+</html>
