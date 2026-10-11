@@ -3,8 +3,7 @@ export async function customerFromRequest(req: Request): Promise<string | null> 
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '').trim();
   if (!token) return null;
   if (process.env.APP_AUTH_MODE === 'mock') {
-    // Demo tokens: local dev and Vercel preview only, never a production deployment.
-    if (process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV !== 'preview') throw new Error('APP_AUTH_MODE=mock is only allowed in dev/preview');
+    if (!demoTokensAllowed()) throw new Error('APP_AUTH_MODE=mock needs dev, Vercel preview, or ALLOW_DEMO_TOKEN=true');
     return /^\d{6,10}$/.test(token) ? token : null;
   }
   const url = process.env.CBN_AUTH_VERIFY_URL;
@@ -14,6 +13,11 @@ export async function customerFromRequest(req: Request): Promise<string | null> 
   const j = (await r.json()) as { customer_id?: string | number };
   return j.customer_id != null ? String(j.customer_id) : null;
 }
+
+/** Demo tokens (token = customer_id): dev, Vercel preview, or explicit ALLOW_DEMO_TOKEN=true. Remove the flag before launch. */
+export const demoTokensAllowed = () =>
+  process.env.NODE_ENV !== 'production' || process.env.VERCEL_ENV === 'preview' || process.env.ALLOW_DEMO_TOKEN === 'true';
+export const demoTokensOn = () => process.env.APP_AUTH_MODE === 'mock' && demoTokensAllowed();
 
 export const deviceOf = (req: Request) => {
   const h = req.headers.get('x-device') ?? req.headers.get('user-agent') ?? '';

@@ -48,6 +48,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: '#6B7684' }}><span>Check-in Admin</span><span>/</span><b style={{ color: '#12263A', fontWeight: 700 }}>{page}{sub}</b></div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, position: 'relative' }}>
               {me && <span className="tab" style={{ fontSize: 13, fontWeight: 600, color: '#3C4A57' }}>{p2(d.getUTCDate())} {MON[d.getUTCMonth()]} {d.getUTCFullYear()} · {p2(d.getUTCHours())}:{p2(d.getUTCMinutes())}:{p2(d.getUTCSeconds())} WIB</span>}
+              {me?.demo && <span title="Siapa pun bisa check-in pakai customer ID mana pun. Matikan APP_AUTH_MODE=mock / ALLOW_DEMO_TOKEN sebelum rilis." style={{ height: 26, padding: '0 10px', borderRadius: 999, background: '#FEF4F5', color: '#E11D2E', fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center' }}>Token demo aktif</span>}
               {me && <span style={{ height: 26, padding: '0 10px', borderRadius: 999, background: '#E8F7EE', color: '#15803D', fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center' }}>{me.env}</span>}
               <button onClick={() => setMenu(!menu)} aria-label="Akun" aria-expanded={menu} style={{ width: 34, height: 34, borderRadius: '50%', border: 'none', background: '#E8F3FC', color: '#0B72C4', fontSize: 13, fontWeight: 800, cursor: 'pointer' }}>{me ? initials(me.name) : ''}</button>
               {menu && me && (

@@ -110,7 +110,7 @@ npm run seed                      # first admin  (add -- --demo for fake data, d
 npm run dev                       # /login → /admin ; webview: /app#token=30110910 (APP_AUTH_MODE=mock)
 npm test                          # formula tests
 ```
-`APP_AUTH_MODE=mock` is refused when `NODE_ENV=production`.
+`APP_AUTH_MODE=mock` (token = customer_id) runs in dev and on Vercel previews. On production it also needs `ALLOW_DEMO_TOKEN=true`; the admin header then shows a red **Token demo aktif** badge. Remove it before launch: anyone could check in as any customer ID.
 
 ## Not built / open
 
