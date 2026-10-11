@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#E9EDF2;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#12263A}a{color:#0B72C4;text-decoration:none}a:hover{color:#08558F}</style>
+</helmet>
+<div style="padding:56px 48px 120px;display:flex;flex-direction:column;gap:48px">
+  <header style="display:flex;flex-direction:column;gap:10px;max-width:760px">
+    <span style="font-size:13px;font-weight:700;color:#0B72C4;letter-spacing:.04em">CBN FIBER APP · DAILY CHECK-IN</span>
+    <h1 style="margin:0;font-size:40px;font-weight:800;letter-spacing:-.02em;line-height:1.1">Check-in harian di dalam app CBN</h1>
+    <p style="margin:0;font-size:16px;color:#4A5867;line-height:1.6;text-wrap:pretty">Lima layar mengikuti gaya Home CBN fiber: biru CBN, Plus Jakarta Sans, kartu putih radius 16. Setiap HP bisa diklik. Ganti event aktif (Double Poin, Early Bird, Tantangan, atau tanpa event) lewat Tweaks. Area gambar bisa diisi aset brand (drag & drop) dan otomatis sama di semua layar. Aturan poin lengkap ada di <a href="Daily Login diCBN v4.dc.html">design system v4</a>.</p>
+  </header>
+  <div style="display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:14px;width:390px">
+      <div style="display:flex;flex-direction:column;gap:4px"><b style="font-size:17px;font-weight:800">1 · Pop-up saat buka app</b><span style="font-size:13.5px;color:#6B7684;line-height:1.5">Bottom sheet di atas Beranda, sekali sehari.</span></div>
+      <dc-import name="CheckinPhone" step="{{ s1 }}" user-name="{{ userName }}" streak="{{ streak }}" balance="{{ balance }}" event="{{ event }}" hint-size="390px,844px"></dc-import>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;width:390px">
+      <div style="display:flex;flex-direction:column;gap:4px"><b style="font-size:17px;font-weight:800">2 · Sukses klaim</b><span style="font-size:13.5px;color:#6B7684;line-height:1.5">Poin masuk + jam tercatat sampai detik.</span></div>
+      <dc-import name="CheckinPhone" step="{{ s2 }}" user-name="{{ userName }}" streak="{{ streak }}" balance="{{ balance }}" event="{{ event }}" hint-size="390px,844px"></dc-import>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;width:390px">
+      <div style="display:flex;flex-direction:column;gap:4px"><b style="font-size:17px;font-weight:800">3 · Kartu di Beranda</b><span style="font-size:13.5px;color:#6B7684;line-height:1.5">Di bawah Cybro Loyalty, di atas Layanan Saya.</span></div>
+      <dc-import name="CheckinPhone" step="{{ s3 }}" user-name="{{ userName }}" streak="{{ streak }}" balance="{{ balance }}" event="{{ event }}" hint-size="390px,844px"></dc-import>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;width:390px">
+      <div style="display:flex;flex-direction:column;gap:4px"><b style="font-size:17px;font-weight:800">4 · Halaman Poin Saya</b><span style="font-size:13.5px;color:#6B7684;line-height:1.5">Saldo, level Cybro, rincian, peringkat, riwayat.</span></div>
+      <dc-import name="CheckinPhone" step="{{ s4 }}" user-name="{{ userName }}" streak="{{ streak }}" balance="{{ balance }}" event="{{ event }}" hint-size="390px,844px"></dc-import>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;width:390px">
+      <div style="display:flex;flex-direction:column;gap:4px"><b style="font-size:17px;font-weight:800">5 · Peringkat top 10</b><span style="font-size:13.5px;color:#6B7684;line-height:1.5">Poin bulan ini / streak, posisi Anda selalu terlihat.</span></div>
+      <dc-import name="CheckinPhone" step="{{ s5 }}" user-name="{{ userName }}" streak="{{ streak }}" balance="{{ balance }}" event="{{ event }}" hint-size="390px,844px"></dc-import>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;userName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Dian Anggraeni&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;streak&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:12,&quot;min&quot;:0,&quot;max&quot;:120,&quot;tsType&quot;:&quot;number&quot;},&quot;balance&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2340,&quot;tsType&quot;:&quot;number&quot;},&quot;event&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;double&quot;,&quot;earlybird&quot;,&quot;challenge&quot;],&quot;default&quot;:&quot;double&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Event&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      s1: 1, s2: 2, s3: 3, s4: 4, s5: 5,
+      userName: this.props.userName ?? 'Dian Anggraeni',
+      streak: this.props.streak ?? 12,
+      balance: this.props.balance ?? 2340,
+      event: this.props.event ?? 'double',
+    };
+  }
+}
+</script>
+</body>
+</html>

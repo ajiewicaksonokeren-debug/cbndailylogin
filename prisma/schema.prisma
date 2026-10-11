@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Key/value config edited from admin: rules, levels, popup, board, integration.
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model Asset {
+  id        String   @id @default(cuid())
+  mime      String
+  data      Bytes
+  createdAt DateTime @default(now())
+}
+
+enum EventType {
+  multiplier
+  time_window
+  challenge
+}
+
+model Event {
+  id         String    @id @default(cuid())
+  name       String    @db.VarChar(28)
+  type       EventType
+  value      Float
+  start      DateTime?
+  end        DateTime?
+  windowFrom String? // HH:MM:SS WIB, time_window only
+  windowTo   String?
+  targetDays Int? // challenge only
+  segments   String[]
+  pushStart  Boolean   @default(true)
+  push3h     Boolean   @default(true)
+  draft      Boolean   @default(true)
+  bannerId   String?
+  createdAt  DateTime  @default(now())
+  checkIns   CheckInEvent[]
+}
+
+// Only customer_id is stored. Names come from the CBN customer API.
+model Member {
+  customerId    String    @id
+  streak        Int       @default(0)
+  lastDay       String? // YYYY-MM-DD check-in day key
+  lastCheckInAt DateTime?
+  createdAt     DateTime  @default(now())
+  checkIns      CheckIn[]
+}
+
+model CheckIn {
+  id         Int      @id @default(autoincrement())
+  customerId String
+  day        String
+  at         DateTime @default(now()) // server time
+  streak     Int
+  mult       Float
+  base       Int
+  levelBonus Int
+  cycleBonus Int
+  milestone  Int
+  eventBonus Int
+  total      Int
+  device     String
+  member     Member   @relation(fields: [customerId], references: [customerId])
+  events     CheckInEvent[]
+  txs        PointTx[]
+
+  @@unique([customerId, day])
+  @@index([day])
+  @@index([at])
+}
+
+model CheckInEvent {
+  checkInId Int
+  eventId   String
+  bonus     Int
+  checkIn   CheckIn @relation(fields: [checkInId], references: [id], onDelete: Cascade)
+  event     Event   @relation(fields: [eventId], references: [id])
+
+  @@id([checkInId, eventId])
+  @@index([eventId])
+}
+
+// Append-only points ledger. Balance = sum of unexpired rows.
+model PointTx {
+  id         Int      @id @default(autoincrement())
+  customerId String
+  at         DateTime @default(now())
+  label      String
+  points     Int
+  expiresAt  DateTime
+  checkInId  Int?
+  checkIn    CheckIn? @relation(fields: [checkInId], references: [id])
+
+  @@index([customerId, at])
+  @@index([at])
+}
+
+// One row per customer per day the check-in UI was opened; popup dismissal.
+model DailyOpen {
+  customerId String
+  day        String
+  dismissed  Boolean @default(false)
+
+  @@id([customerId, day])
+  @@index([day])
+}
+
+enum Role {
+  admin
+  marketing
+  cs
+}
+
+model AdminUser {
+  id           String @id @default(cuid())
+  email        String @unique
+  name         String
+  role         Role
+  passwordHash String
+}
