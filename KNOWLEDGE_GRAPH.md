@@ -110,7 +110,7 @@ npm run seed                      # first admin  (add -- --demo for fake data, d
 npm run dev                       # /login → /admin ; webview: /app#token=30110910 (APP_AUTH_MODE=mock)
 npm test                          # formula tests
 ```
-`APP_AUTH_MODE=mock` (token = customer_id) runs in dev and on Vercel previews. On production it also needs `ALLOW_DEMO_TOKEN=true`; the admin header then shows a red **Token demo aktif** badge. Remove it before launch: anyone could check in as any customer ID.
+**Minimum deploy = one variable: `DATABASE_URL`.** `SESSION_SECRET`/`DATA_KEY` fall back to keys derived from it (rotating the DB password then logs admins out and requires re-entering the integration secret). Auth mode defaults to demo (`mock`, token = customer_id) until `CBN_AUTH_VERIFY_URL` is set; the admin header shows a red **Token demo aktif** badge while demo is on. `/api/health` reports what is set and, if the Supabase pooler host is wrong, which `aws-0`/`aws-1` host works.
 
 ## Not built / open
 

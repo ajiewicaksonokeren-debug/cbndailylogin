@@ -7,10 +7,14 @@ const b64u = (b: ArrayBuffer | Uint8Array) =>
   btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const unb64u = (s: string) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
 
-const key = () => {
+// SESSION_SECRET, or derived from DATABASE_URL (a secret already) so a deploy needs only one variable.
+const key = async () => {
   const s = process.env.SESSION_SECRET ?? '';
-  if (s.length < 32) throw new Error('SESSION_SECRET must be at least 32 chars');
-  return crypto.subtle.importKey('raw', enc.encode(s), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']);
+  const raw = s.length >= 32 ? enc.encode(s)
+    : process.env.DATABASE_URL ? await crypto.subtle.digest('SHA-256', enc.encode('cbn-session:' + process.env.DATABASE_URL))
+    : null;
+  if (!raw) throw new Error('Set SESSION_SECRET (32+ chars) or DATABASE_URL');
+  return crypto.subtle.importKey('raw', raw, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']);
 };
 
 export async function sign(s: Session) {

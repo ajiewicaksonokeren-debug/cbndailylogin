@@ -1,7 +1,10 @@
-import { createCipheriv, createDecipheriv, createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
+import { createCipheriv, createDecipheriv, createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 
 const dataKey = () => {
   const k = Buffer.from(process.env.DATA_KEY ?? '', 'base64');
+  if (k.length === 32) return k;
+  // Fallback: derived from DATABASE_URL. Changing the DB password then requires re-entering the integration secret.
+  if (process.env.DATABASE_URL) return createHash('sha256').update('cbn-data:' + process.env.DATABASE_URL).digest();
   if (k.length !== 32) throw new Error('DATA_KEY must be 32 bytes base64');
   return k;
 };

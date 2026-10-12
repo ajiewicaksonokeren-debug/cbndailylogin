@@ -2,7 +2,7 @@
 export async function customerFromRequest(req: Request): Promise<string | null> {
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '').trim();
   if (!token) return null;
-  if (process.env.APP_AUTH_MODE === 'mock') {
+  if (authMode() === 'mock') {
     if (!demoTokensAllowed()) throw new Error('APP_AUTH_MODE=mock needs dev, Vercel preview, or ALLOW_DEMO_TOKEN=true');
     return /^\d{6,10}$/.test(token) ? token : null;
   }
@@ -14,10 +14,12 @@ export async function customerFromRequest(req: Request): Promise<string | null> 
   return j.customer_id != null ? String(j.customer_id) : null;
 }
 
-/** Demo tokens (token = customer_id): dev, Vercel preview, or explicit ALLOW_DEMO_TOKEN=true. Remove the flag before launch. */
+/** Until the real CBN auth endpoint is configured the app runs in demo mode (token = customer_id). */
+export const authMode = () => process.env.APP_AUTH_MODE ?? (process.env.CBN_AUTH_VERIFY_URL ? 'cbn' : 'mock');
+/** Demo tokens: dev, Vercel preview, ALLOW_DEMO_TOKEN=true, or no CBN auth configured yet. Admin shows a red badge. */
 export const demoTokensAllowed = () =>
-  process.env.NODE_ENV !== 'production' || process.env.VERCEL_ENV === 'preview' || process.env.ALLOW_DEMO_TOKEN === 'true';
-export const demoTokensOn = () => process.env.APP_AUTH_MODE === 'mock' && demoTokensAllowed();
+  process.env.NODE_ENV !== 'production' || process.env.VERCEL_ENV === 'preview' || process.env.ALLOW_DEMO_TOKEN === 'true' || !process.env.CBN_AUTH_VERIFY_URL;
+export const demoTokensOn = () => authMode() === 'mock' && demoTokensAllowed();
 
 export const deviceOf = (req: Request) => {
   const h = req.headers.get('x-device') ?? req.headers.get('user-agent') ?? '';
