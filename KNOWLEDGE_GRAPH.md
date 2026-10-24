@@ -112,6 +112,14 @@ npm test                          # formula tests
 ```
 **Minimum deploy = one variable: `DATABASE_URL`.** `SESSION_SECRET`/`DATA_KEY` fall back to keys derived from it (rotating the DB password then logs admins out and requires re-entering the integration secret). Auth mode defaults to demo (`mock`, token = customer_id) until `CBN_AUTH_VERIFY_URL` is set; the admin header shows a red **Token demo aktif** badge while demo is on. `/api/health` reports what is set and, if the Supabase pooler host is wrong, which `aws-0`/`aws-1` host works.
 
+## Claude tooling (Claude Code Game Studios)
+
+Installed as-is from `Donchitos/Claude-Code-Game-Studios@05ad7c8` by owner request, despite the mismatch: it targets Godot/Unity/Unreal, this repo is Next.js. Owns `.claude/` (agents, skills, 16 hooks, path-scoped rules), `CLAUDE.md`, `project.yaml`, `docs/`, `design/`, `production/`, `studio-tests/`, `src/CLAUDE.md`, `UPGRADING.md`. Not copied: upstream README/CHANGELOG/CONTRIBUTING/SECURITY and `.github/` (CODEOWNERS/FUNDING belong to upstream). License: `.claude/LICENSE-claude-code-game-studios` (MIT).
+- **This file stays the source of truth** for the app; the template's `CLAUDE.md` and rules do not know this codebase.
+- Hooks need `bash`, `python3` (reads `project.yaml`), optional `jq`. A commit staging data JSON is blocked without Python.
+- `/setup-engine` has no Next.js option. Leave the engine unset; skip engine-specialist agents.
+- Uninstall: delete the paths above and the `Claude Code Game Studios` block in `.gitignore`.
+
 ## Not built / open
 
 - **Push notifications** (event start, 3 hours before end): the flags are stored, but no sender exists, because the CBN push provider is unknown.
