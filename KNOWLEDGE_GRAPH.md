@@ -121,6 +121,13 @@ Installed as-is from `Donchitos/Claude-Code-Game-Studios@05ad7c8` by owner reque
 - Uninstall: delete the paths above and the `Claude Code Game Studios` block in `.gitignore`.
 - **Plugin `universal-modder@universal-modder`** (`rehan-remade/universal-modder`, PC-game modding: recon, reverse engineering, fal assets, `um` CLI). Not vendored: `.claude/settings.json` declares the marketplace + `enabledPlugins`, so Claude Code fetches it on trust. Adds a fal MCP server (needs `FAL_KEY` or browser OAuth) and a SessionStart hook putting `um` on PATH. Unrelated to this app. Remove: drop both keys.
 
+## Video (`video/`, Remotion)
+
+Separate npm project scaffolded with `npx create-video@latest --yes --hello-world video` (Remotion 4.0.538). Not part of the Next app: root `tsconfig.json` excludes `video/`, own `package.json`/lockfile. Compositions: `HelloWorld`, `Logo`, `Title` (template demo, no CBN content yet).
+- `cd video && npm install && npm run dev` (Studio) / `npx remotion render HelloWorld out.mp4`.
+- Cloud container: Remotion's headless-shell download (`remotion.media`) is blocked; pass `--browser-executable=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome`.
+- **License:** free only for individuals/companies up to 3 people. CBN as a company likely needs a Remotion company license (remotion.pro/license) before production use.
+
 ## Not built / open
 
 - **Push notifications** (event start, 3 hours before end): the flags are stored, but no sender exists, because the CBN push provider is unknown.
