@@ -119,6 +119,7 @@ Installed as-is from `Donchitos/Claude-Code-Game-Studios@05ad7c8` by owner reque
 - Hooks need `bash`, `python3` (reads `project.yaml`), optional `jq`. A commit staging data JSON is blocked without Python.
 - `/setup-engine` has no Next.js option. Leave the engine unset; skip engine-specialist agents.
 - Uninstall: delete the paths above and the `Claude Code Game Studios` block in `.gitignore`.
+- **Plugin `universal-modder@universal-modder`** (`rehan-remade/universal-modder`, PC-game modding: recon, reverse engineering, fal assets, `um` CLI). Not vendored: `.claude/settings.json` declares the marketplace + `enabledPlugins`, so Claude Code fetches it on trust. Adds a fal MCP server (needs `FAL_KEY` or browser OAuth) and a SessionStart hook putting `um` on PATH. Unrelated to this app. Remove: drop both keys.
 
 ## Not built / open
 
