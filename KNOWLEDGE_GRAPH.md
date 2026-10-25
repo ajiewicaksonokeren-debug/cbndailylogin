@@ -112,22 +112,6 @@ npm test                          # formula tests
 ```
 **Minimum deploy = one variable: `DATABASE_URL`.** `SESSION_SECRET`/`DATA_KEY` fall back to keys derived from it (rotating the DB password then logs admins out and requires re-entering the integration secret). Auth mode defaults to demo (`mock`, token = customer_id) until `CBN_AUTH_VERIFY_URL` is set; the admin header shows a red **Token demo aktif** badge while demo is on. `/api/health` reports what is set and, if the Supabase pooler host is wrong, which `aws-0`/`aws-1` host works.
 
-## Claude tooling (Claude Code Game Studios)
-
-Installed as-is from `Donchitos/Claude-Code-Game-Studios@05ad7c8` by owner request, despite the mismatch: it targets Godot/Unity/Unreal, this repo is Next.js. Owns `.claude/` (agents, skills, 16 hooks, path-scoped rules), `CLAUDE.md`, `project.yaml`, `docs/`, `design/`, `production/`, `studio-tests/`, `src/CLAUDE.md`, `UPGRADING.md`. Not copied: upstream README/CHANGELOG/CONTRIBUTING/SECURITY and `.github/` (CODEOWNERS/FUNDING belong to upstream). License: `.claude/LICENSE-claude-code-game-studios` (MIT).
-- **This file stays the source of truth** for the app; the template's `CLAUDE.md` and rules do not know this codebase.
-- Hooks need `bash`, `python3` (reads `project.yaml`), optional `jq`. A commit staging data JSON is blocked without Python.
-- `/setup-engine` has no Next.js option. Leave the engine unset; skip engine-specialist agents.
-- Uninstall: delete the paths above and the `Claude Code Game Studios` block in `.gitignore`.
-- **Plugin `universal-modder@universal-modder`** (`rehan-remade/universal-modder`, PC-game modding: recon, reverse engineering, fal assets, `um` CLI). Not vendored: `.claude/settings.json` declares the marketplace + `enabledPlugins`, so Claude Code fetches it on trust. Adds a fal MCP server (needs `FAL_KEY` or browser OAuth) and a SessionStart hook putting `um` on PATH. Unrelated to this app. Remove: drop both keys.
-
-## Video (`video/`, Remotion)
-
-Separate npm project scaffolded with `npx create-video@latest --yes --hello-world video` (Remotion 4.0.538). Not part of the Next app: root `tsconfig.json` excludes `video/`, own `package.json`/lockfile. Compositions: `HelloWorld`, `Logo`, `Title` (template demo, no CBN content yet).
-- `cd video && npm install && npm run dev` (Studio) / `npx remotion render HelloWorld out.mp4`.
-- Cloud container: Remotion's headless-shell download (`remotion.media`) is blocked; pass `--browser-executable=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome`.
-- **License:** free only for individuals/companies up to 3 people. CBN as a company likely needs a Remotion company license (remotion.pro/license) before production use.
-
 ## Not built / open
 
 - **Push notifications** (event start, 3 hours before end): the flags are stored, but no sender exists, because the CBN push provider is unknown.
